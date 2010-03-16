@@ -1,0 +1,20 @@
+SuperBackup
+===========
+
+Installation
+------------
+Copy all these files somewhere onto your server.
+For example
+	/var/www/admin/backup/
+	/var/www/admin/backup/files
+	/var/www/admin/backup/files/README
+	/var/www/admin/backup/files/config_sample.sh
+	/var/www/admin/backup/files/config_sample.sh
+	/var/www/admin/backup/files/file-excludes.txt
+	/var/www/admin/backup/files/superbackup_names.sh
+	/var/www/admin/backup/files/superbackup_functions.sh
+
+Copy config_sample.sh to config.sh and configure the options for your needs.
+Each option is described there.
+
+Schedule superbackup.sh to run as an automated task
