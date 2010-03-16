@@ -44,13 +44,17 @@ mysqlpassword=rootpassword
 
 
 # Include the required files
-source $backupjobs/config.sh
+scriptroot=`dirname "$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")"`
+source $scriptroot/config.sh
 source $backupjobs/superbackup_functions.sh
 source $backupjobs/superbackup_names.sh
 
 # Clear out the temp folder
 rm -rf $backuptemp/*
 
+# Create the main target dirs required
+mkdir -p $backuptemp
+mkdir -p $backupfiles
 # Backup the files
 for i in `find $backuptargets -maxdepth 1 -type d`;
 do
