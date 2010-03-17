@@ -1,10 +1,16 @@
 #!/bin/bash
-set -e # Fail if any sub-command fails
-set -u # Make sure variables are declared
 
 op_message=""
 op_status="ok"
 op_started=0
+
+# If we're not running in an interactive terminal, use simple output
+if [[ -n "${TERM:+x}" || ${TERM} == "dumb" ]]; then
+	op_term=0
+else
+	op_term=1
+fi
+
 
 function StartMessage() {
 	op_message=$1
@@ -13,8 +19,13 @@ function StartMessage() {
 	then
 	  EndMessage ""
 	fi
-	op_colour="1;37"
-	printf "\033[${op_colour}m${op_message}\033[00m"
+
+	if [ $op_term -eq 0 ]; then
+		printf "${op_message}"
+	else
+		op_colour="1;37"
+		printf "\033[${op_colour}m${op_message}\033[00m"
+	fi
 	op_status="ok"
 	op_started=1
 }
@@ -49,7 +60,11 @@ function EndMessage() {
 	 	  op_colour="0;31"
 		fi
 
-    printf "%$(($(tput cols) - ${#op_message} - ${#op_status} - 2))s%b\n" " " "[\033[${op_colour}m${op_status}\033[00m]"
+		if [ $op_term -eq 0 ]; then
+  	  printf " ${op_status}\n"
+		else
+	    printf "%$(($(tput cols) - ${#op_message} - ${#op_status} - 2))s%b\n" " " "[\033[${op_colour}m${op_status}\033[00m]"
+		fi
 	fi
 	op_started=0
 }
