@@ -36,7 +36,12 @@ fi
 if [ "$dayofmonth" = 1 ]; then
   # on the first of the month, ignore all the above and save a monthly file
   filename=month-$month
+fi
 
+
+if [ "$dayofmonth" = 31 && "$month" = 12  ]; then
+  # on the last of the year, ignore all the above and save a annual file
+  filename=year-$month
 fi
 
 # By the end, we should have a name like
