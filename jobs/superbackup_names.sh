@@ -39,7 +39,7 @@ if [ "$dayofmonth" = 1 ]; then
 fi
 
 
-if [ "$dayofmonth" = 31 && "$month" = 12  ]; then
+if [ "$dayofmonth" = 31 ] && [ "$month" = 12 ]; then
   # on the last of the year, ignore all the above and save a annual file
   filename=year-$month
 fi
