@@ -21,6 +21,7 @@ mysqlpassword=rootpassword
 # Shouldn't be anything to change below here unless you REALLY know
 # what you're doing
 # ==============================================================================
+op_finalstatus=ok
 
 
 # Include the required files
@@ -29,14 +30,17 @@ source $scriptroot/superbackup_functions.sh
 source $scriptroot/superbackup_names.sh
 source $scriptroot/superbackup_output.sh
 
-# Clear out the temp folder
-StartMessage "Removing backup Temp files"
-rm -rf $backuptemp/*
-EndMessage "ok"
 
 # Create the main target dirs required
 mkdir -p $backuptemp
 mkdir -p $backupfiles
+op_filename=`mktemp`
+
+# Clear out the temp folder
+StartMessage "Removing backup Temp files"
+rm -rf $backuptemp/*
+EndMessage ""
+
 
 # Backup the files
 StartMessage "Looking for directories to backup..."
@@ -61,7 +65,6 @@ done
 
 
 # Backup the databases
-
 if [ $processmysql == 1 ]; then
 				StartMessage "Looking for databases to backup..."
 				EndMessage ""
@@ -71,4 +74,15 @@ if [ $processmysql == 1 ]; then
         done
 fi
 
+
 EndMessage ""
+
+
+# For non-console execution, dump output only if there was a non-ok status
+if [ $op_term -eq 0 ]; then
+	if [ "$op_finalstatus" != "ok" ]; then
+		cat $op_filename
+	fi
+fi
+
+rm $op_filename

@@ -3,9 +3,11 @@
 op_message=""
 op_status="ok"
 op_started=0
+op_tmpmessage=""
+op_filename=""
 
 # If we're not running in an interactive terminal, use simple output
-if [[ -n "${TERM:+x}" || ${TERM} == "dumb" ]]; then
+if [ `tty -s` ]; then
 	op_term=0
 else
 	op_term=1
@@ -21,7 +23,7 @@ function StartMessage() {
 	fi
 
 	if [ $op_term -eq 0 ]; then
-		printf "${op_message}"
+		op_tmpmessage="${op_message}"
 	else
 		op_colour="1;37"
 		printf "\033[${op_colour}m${op_message}\033[00m"
@@ -29,6 +31,7 @@ function StartMessage() {
 	op_status="ok"
 	op_started=1
 }
+
 
 function EndMessage() {
 	op_colour="0;32"
@@ -40,8 +43,15 @@ function EndMessage() {
 
 	if [ "$op_status" == "" ]
 	then
-		printf "\n"
+		if [ $op_term -eq 0 ]; then
+  	  echo "${op_tmpmessage}" >> $op_filename
+		else
+			printf "\n"
+		fi
+
 	else
+
+		op_tmpmessage="${op_tmpmessage} ${op_status}"
 
 		# 31 = red
 	  # 32 = green
@@ -61,10 +71,21 @@ function EndMessage() {
 		fi
 
 		if [ $op_term -eq 0 ]; then
-  	  printf " ${op_status}\n"
+  	  echo "${op_tmpmessage}" >> $op_filename
 		else
 	    printf "%$(($(tput cols) - ${#op_message} - ${#op_status} - 2))s%b\n" " " "[\033[${op_colour}m${op_status}\033[00m]"
 		fi
+		
+		# track the final status in case there was a reported failure
+		if [ "$op_finalstatus" = "ok" ]
+		then
+			if [[ "$op_status" != "ok" && "$op_status" != "" ]]
+			then
+				echo flagging failure with $op_finalstatus and $op_status
+				op_finalstatus="error"
+			fi
+		fi
+				
 	fi
 	op_started=0
 }
