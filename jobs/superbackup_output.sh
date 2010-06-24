@@ -7,7 +7,8 @@ op_tmpmessage=""
 op_filename=""
 
 # If we're not running in an interactive terminal, use simple output
-if [ `tty -s` ]; then
+tty -s
+if [ $? -gt 0 ]; then
 	op_term=0
 else
 	op_term=1
@@ -81,7 +82,6 @@ function EndMessage() {
 		then
 			if [[ "$op_status" != "ok" && "$op_status" != "" ]]
 			then
-				echo flagging failure with $op_finalstatus and $op_status
 				op_finalstatus="error"
 			fi
 		fi

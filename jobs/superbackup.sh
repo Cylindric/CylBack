@@ -77,7 +77,7 @@ fi
 
 EndMessage ""
 
-
+				
 # For non-console execution, dump output only if there was a non-ok status
 if [ $op_term -eq 0 ]; then
 	if [ "$op_finalstatus" != "ok" ]; then
